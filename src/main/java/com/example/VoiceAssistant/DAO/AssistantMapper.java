@@ -8,66 +8,77 @@ import java.util.List;
 @Mapper
 public interface AssistantMapper {
 
-    @Insert("INSERT INTO assistants(name, description, model, prompt, voice_style, extra_params) " +
-            "VALUES(#{name}, #{description}, #{model}, #{prompt}, #{voiceStyleJson}, #{extraParamsJson})")
-    @Options(useGeneratedKeys = true, keyProperty = "id")
-    int insert(Assistant assistant);
-
-    @Select("SELECT id, name, description, model, prompt, voice_style, extra_params FROM assistants WHERE id = #{id}")
-    @Results({
-        @Result(property = "id", column = "id"),
-        @Result(property = "name", column = "name"),
-        @Result(property = "description", column = "description"),
-        @Result(property = "model", column = "model"),
-        @Result(property = "prompt", column = "prompt"),
-        @Result(property = "voiceStyleJson", column = "voice_style"),
-        @Result(property = "extraParamsJson", column = "extra_params")
+    /**
+     * 结果集映射（解决数据库字段与实体类驼峰命名映射问题）
+     */
+    @Results(id = "AssistantResultMap", value = {
+            @Result(column = "id", property = "id"),
+            @Result(column = "name", property = "name"),
+            @Result(column = "description", property = "description"),
+            @Result(column = "model", property = "model"),
+            @Result(column = "prompt", property = "prompt"),
+            @Result(column = "voice_style_json", property = "voiceStyleJson"),
+            @Result(column = "extra_params_json", property = "extraParamsJson")
     })
+    @Select("SELECT * FROM assistant WHERE id = #{id}")
     Assistant selectById(int id);
 
-    @Select("SELECT id, name, description, model, prompt, voice_style, extra_params FROM assistants")
-    @Results({
-        @Result(property = "id", column = "id"),
-        @Result(property = "name", column = "name"),
-        @Result(property = "description", column = "description"),
-        @Result(property = "model", column = "model"),
-        @Result(property = "prompt", column = "prompt"),
-        @Result(property = "voiceStyleJson", column = "voice_style"),
-        @Result(property = "extraParamsJson", column = "extra_params")
-    })
-    List<Assistant> selectAll();
+    /**
+     * 根据名称查询助手
+     */
+    @ResultMap("AssistantResultMap")
+    @Select("SELECT * FROM assistant WHERE name = #{name}")
+    Assistant selectByName(String name);
 
-    @Update("UPDATE assistants SET name=#{name}, description=#{description}, model=#{model}, " +
-            "prompt=#{prompt}, voice_style=#{voiceStyleJson}, extra_params=#{extraParamsJson} WHERE id=#{id}")
+    /**
+     * 插入助手
+     */
+    @Insert("INSERT INTO assistant (" +
+            "name, description, model, prompt, " +
+            "voice_style_json, extra_params_json" +
+            ") VALUES (" +
+            "#{name}, #{description}, #{model}, #{prompt}, " +
+            "#{voiceStyleJson}, #{extraParamsJson}" +
+            ")")
+    @Options(useGeneratedKeys = true, keyProperty = "id") // 自动生成主键并赋值给id字段
+    int insert(Assistant assistant);
+
+    /**
+     * 更新助手信息
+     */
+    @Update("UPDATE assistant SET " +
+            "name = #{name}, " +
+            "description = #{description}, " +
+            "model = #{model}, " +
+            "prompt = #{prompt}, " +
+            "voice_style_json = #{voiceStyleJson}, " +
+            "extra_params_json = #{extraParamsJson} " +
+            "WHERE id = #{id}")
     int update(Assistant assistant);
 
-    @Delete("DELETE FROM assistants WHERE id = #{id}")
+    /**
+     * 根据ID删除助手
+     */
+    @Delete("DELETE FROM assistant WHERE id = #{id}")
     int deleteById(int id);
 
-    @Select("SELECT id, name, description, model, prompt, voice_style, extra_params FROM assistants LIMIT #{limit} OFFSET #{offset}")
-    @Results({
-        @Result(property = "id", column = "id"),
-        @Result(property = "name", column = "name"),
-        @Result(property = "description", column = "description"),
-        @Result(property = "model", column = "model"),
-        @Result(property = "prompt", column = "prompt"),
-        @Result(property = "voiceStyleJson", column = "voice_style"),
-        @Result(property = "extraParamsJson", column = "extra_params")
-    })
-    List<Assistant> selectWithPagination(@Param("limit") int limit, @Param("offset") int offset);
+    /**
+     * 查询所有助手
+     */
+    @ResultMap("AssistantResultMap")
+    @Select("SELECT * FROM assistant")
+    List<Assistant> selectAll();
 
-    @Select("SELECT COUNT(*) FROM assistants")
-    int count();
+    /**
+     * 分页查询助手
+     */
+    @ResultMap("AssistantResultMap")
+    @Select("SELECT * FROM assistant LIMIT #{offset}, #{size}")
+    List<Assistant> selectWithPagination(@Param("size") int size, @Param("offset") int offset);
 
-    @Select("SELECT id, name, description, model, prompt, voice_style, extra_params FROM assistants WHERE name = #{name}")
-    @Results({
-        @Result(property = "id", column = "id"),
-        @Result(property = "name", column = "name"),
-        @Result(property = "description", column = "description"),
-        @Result(property = "model", column = "model"),
-        @Result(property = "prompt", column = "prompt"),
-        @Result(property = "voiceStyleJson", column = "voice_style"),
-        @Result(property = "extraParamsJson", column = "extra_params")
-    })
-    Assistant selectByName(String name);
+    /**
+     * 统计助手总数
+     */
+    @Select("SELECT COUNT(*) FROM assistant")
+    long count();
 }

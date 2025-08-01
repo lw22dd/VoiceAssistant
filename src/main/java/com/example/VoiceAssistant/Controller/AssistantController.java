@@ -1,9 +1,10 @@
 package com.example.VoiceAssistant.Controller;
 
+
 import com.example.VoiceAssistant.Model.Assistant;
+import com.example.VoiceAssistant.Service.AssistantService;
 import com.example.VoiceAssistant.Utils.PageResult;
 import com.example.VoiceAssistant.Utils.Result;
-import com.example.VoiceAssistant.Service.AssistantService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -60,7 +61,7 @@ public class AssistantController {
         }
     }
 
-    @GetMapping
+    @GetMapping("/all")
     public Result getAllAssistants() {
         try {
             List<Assistant> assistants = assistantService.getAllAssistants();
@@ -81,7 +82,9 @@ public class AssistantController {
             return new Result(400, null, "获取失败: " + e.getMessage());
         }
     }
-
-
+    @GetMapping("/ping")
+    public String ping(){
+        return "pongpong";
+    }
 
 }
