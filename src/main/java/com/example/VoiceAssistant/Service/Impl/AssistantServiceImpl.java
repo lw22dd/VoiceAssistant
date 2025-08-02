@@ -2,13 +2,11 @@ package com.example.VoiceAssistant.Service.Impl;
 
 import com.example.VoiceAssistant.DAO.AssistantMapper;
 import com.example.VoiceAssistant.Model.Assistant;
-import com.example.VoiceAssistant.Model.VoiceStyle;
 import com.example.VoiceAssistant.Service.AssistantService;
-import com.example.VoiceAssistant.Utils.JsonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.List;
 
 @Service
 public class AssistantServiceImpl implements AssistantService {
@@ -25,15 +23,6 @@ public class AssistantServiceImpl implements AssistantService {
         Assistant existing = assistantMapper.selectByName(assistant.getName());
         if (existing != null) {
             throw new IllegalArgumentException("助手名称 '" + assistant.getName() + "' 已存在");
-        }
-
-        // 设置默认值
-        if (assistant.getExtraParams() == null) {
-            assistant.setExtraParams(new HashMap<>());
-        }
-
-        if (assistant.getVoiceStyle() == null) {
-            assistant.setVoiceStyle(new VoiceStyle());
         }
 
         assistantMapper.insert(assistant);
@@ -70,15 +59,6 @@ public class AssistantServiceImpl implements AssistantService {
         existing.setDescription(assistant.getDescription());
         existing.setModel(assistant.getModel());
         existing.setPrompt(assistant.getPrompt());
-
-        if (assistant.getVoiceStyle() != null) {
-            validateVoiceStyle(assistant.getVoiceStyle());
-            existing.setVoiceStyle(assistant.getVoiceStyle());
-        }
-
-        if (assistant.getExtraParams() != null) {
-            existing.setExtraParams(assistant.getExtraParams());
-        }
 
         assistantMapper.update(existing);
         return existing;
@@ -123,37 +103,6 @@ public class AssistantServiceImpl implements AssistantService {
 
         if (assistant.getModel() == null || assistant.getModel().trim().isEmpty()) {
             throw new IllegalArgumentException("模型不能为空");
-        }
-
-        if (assistant.getVoiceStyle() != null) {
-            validateVoiceStyle(assistant.getVoiceStyle());
-        }
-    }
-
-    /**
-     * 验证语音风格参数
-     * @param voiceStyle 语音风格对象
-     */
-    private void validateVoiceStyle(VoiceStyle voiceStyle) {
-        if (voiceStyle.getSpeed() < 0.5 || voiceStyle.getSpeed() > 2.0) {
-            throw new IllegalArgumentException("语速必须在0.5到2.0之间");
-        }
-
-        if (voiceStyle.getPitch() < 0.5 || voiceStyle.getPitch() > 2.0) {
-            throw new IllegalArgumentException("音高必须在0.5到2.0之间");
-        }
-
-        if (voiceStyle.getVolume() < 0.0 || voiceStyle.getVolume() > 1.0) {
-            throw new IllegalArgumentException("音量必须在0.0到1.0之间");
-        }
-
-        if (voiceStyle.getTemperature() < 0.1 || voiceStyle.getTemperature() > 1.0) {
-            throw new IllegalArgumentException("温度必须在0.1到1.0之间");
-        }
-
-        Set<String> validEmotions = new HashSet<>(Arrays.asList("neutral", "happy", "sad", "angry"));
-        if (!validEmotions.contains(voiceStyle.getEmotion())) {
-            throw new IllegalArgumentException("情感必须是以下值之一: neutral, happy, sad, angry");
         }
     }
 }

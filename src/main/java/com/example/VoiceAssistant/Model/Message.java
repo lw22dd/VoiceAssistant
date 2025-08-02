@@ -1,32 +1,13 @@
 package com.example.VoiceAssistant.Model;
 
-import jakarta.persistence.*;
-import org.hibernate.annotations.CreationTimestamp;
-
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "message")
 public class Message {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private Long id;
-
-    @Column(name = "session_id", nullable = false)
     private String sessionId;
-
-    @Column(name = "role", nullable = false)
     private String role; // user/assistant
-
-    @Column(name = "content", nullable = false)
     private String content;
-
-    @Column(name = "type", nullable = false)
     private String type; // text/voice
-
-    @Column(name = "timestamp", nullable = false, updatable = false)
-    @CreationTimestamp
     private LocalDateTime timestamp;
 
     // 构造函数

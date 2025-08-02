@@ -11,15 +11,16 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/assistants")
+@RequestMapping("/assistant")
 public class AssistantController {
 
     @Autowired
     private AssistantService assistantService;
 
-    @PostMapping
+    @PostMapping("/create")
     public Result createAssistant(@RequestBody Assistant assistant) {
         try {
+            //System.out.println("Received assistant: " + assistant.toString());
             Assistant created = assistantService.createAssistant(assistant);
             return new Result(200, created, "创建成功");
         } catch (Exception e) {
@@ -27,7 +28,7 @@ public class AssistantController {
         }
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/get/{id}")
     public Result getAssistantById(@PathVariable int id) {
         try {
             Assistant assistant = assistantService.getAssistantById(id);
@@ -37,7 +38,7 @@ public class AssistantController {
         }
     }
 
-    @PutMapping("/{id}")
+    @PostMapping("/update/{id}")
     public Result updateAssistant(@PathVariable int id, @RequestBody Assistant assistant) {
         try {
             Assistant updated = assistantService.updateAssistant(id, assistant);
@@ -47,7 +48,7 @@ public class AssistantController {
         }
     }
 
-    @DeleteMapping("/{id}")
+    @PostMapping("/delete/{id}")
     public Result deleteAssistant(@PathVariable int id) {
         try {
             boolean deleted = assistantService.deleteAssistant(id);

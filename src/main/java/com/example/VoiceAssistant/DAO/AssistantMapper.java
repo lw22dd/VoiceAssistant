@@ -16,9 +16,7 @@ public interface AssistantMapper {
             @Result(column = "name", property = "name"),
             @Result(column = "description", property = "description"),
             @Result(column = "model", property = "model"),
-            @Result(column = "prompt", property = "prompt"),
-            @Result(column = "voice_style_json", property = "voiceStyleJson"),
-            @Result(column = "extra_params_json", property = "extraParamsJson")
+            @Result(column = "prompt", property = "prompt")
     })
     @Select("SELECT * FROM assistant WHERE id = #{id}")
     Assistant selectById(int id);
@@ -34,11 +32,9 @@ public interface AssistantMapper {
      * 插入助手
      */
     @Insert("INSERT INTO assistant (" +
-            "name, description, model, prompt, " +
-            "voice_style_json, extra_params_json" +
+            "name, description, model, prompt" +
             ") VALUES (" +
-            "#{name}, #{description}, #{model}, #{prompt}, " +
-            "#{voiceStyleJson}, #{extraParamsJson}" +
+            "#{name}, #{description}, #{model}, #{prompt}" +
             ")")
     @Options(useGeneratedKeys = true, keyProperty = "id") // 自动生成主键并赋值给id字段
     int insert(Assistant assistant);
@@ -50,9 +46,7 @@ public interface AssistantMapper {
             "name = #{name}, " +
             "description = #{description}, " +
             "model = #{model}, " +
-            "prompt = #{prompt}, " +
-            "voice_style_json = #{voiceStyleJson}, " +
-            "extra_params_json = #{extraParamsJson} " +
+            "prompt = #{prompt} " +
             "WHERE id = #{id}")
     int update(Assistant assistant);
 
